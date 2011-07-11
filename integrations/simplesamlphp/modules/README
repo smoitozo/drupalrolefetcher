@@ -1,0 +1,35 @@
+The drupalrolefetcher module for simpleSAMLphp provides the 
+drupalrolefetcher:AddRolesFromDrupal authentication processing filter.
+
+INSTALLATION
+This auth proc can be activated by moving the drupalrolefetcher directory
+to the modules directory of your simpleSAMLphp installation. 
+
+CONFIGURATION
+To use the AddRolesFromDrupal auth proc you can add a configuration
+stanza to a metadata configuration or to config.php under authproc.sp or
+authproc.idp. For more on this see the documentation at 
+http://simplesamlphp.org/docs/1.8/simplesamlphp-authproc
+
+Here is an example configuration stanza for authproc.sp in config.php
+
+        'authproc.sp' => array(
+
+                40 => array(
+                        'class' => 'drupalrolefetcher:AddRolesFromDrupal',
+                        'drf_url' => 'https://www.example.org/drf/',
+                        'drf_sharedsec' => '1234567890abcdefghijklm',
+                        'drf_user_identifier' => 'eduPersonPrincipalName',
+                        'new_attribute_name' => 'wwwexamplecomroles',
+                        ),
+
+        ),
+
+With this stanza in place simpleSAMLphp will execute the AddRolesFromDrupal
+every time a user logs in, regardless of the IdP they use for authentication.
+It will query the Drupal Role Fetcher at https://www.example.org/drf/ using
+the configured shared secret, which was issued by the DRF at www.example.org.
+When the auth proc queries the DRF it will pass the value of 
+eduPersonPrincipalName for the current user. The DRF will look up the roles
+for the user and return them to the auth proc, which will insert them into
+a new identity attribute called wwwexamplecomroles.
