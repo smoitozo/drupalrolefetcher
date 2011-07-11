@@ -1,2 +1,0 @@
-Place the Drupal Role Fetcher folder in a web-accessible directory on the same server as your Drupal site.
-Edit config/config.php to meet your needs.
