@@ -146,7 +146,7 @@ class sspmod_drupalrolefetcher_Auth_Process_AddRolesFromDrupal extends SimpleSAM
    * @return array the Drupal roles
    */
   private function queryDrf($uid) {
-    $strDrupalRoles = file_get_contents($this->config['drf_url'] . '?sharedsec=' . $this->config['drf_sharedsec'] . '&userid=' . $uid . '&mode=PHP');
+    $strDrupalRoles = file_get_contents($this->config['drf_url'] . '?sharedsec=' . $this->config['drf_sharedsec'] . '&userid=' . urlencode($uid) . '&mode=PHP');
     $arrDrupalRoles = unserialize($strDrupalRoles);
 
     if(is_array($arrDrupalRoles) && count($arrDrupalRoles)){
