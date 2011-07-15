@@ -80,7 +80,7 @@ drupal_load('module', 'user');
 $user = user_external_load($_REQUEST['userid']);
 
 // All real Drupal user's have an uid higher than 0 and names.
-if (0 == $user->uid || !isset($user->name)) {
+if ((isset($user->uid) && 0 == $user->uid) || !isset($user->name)) {
   bailout('Failed to locate Drupal user.');
 }
 
