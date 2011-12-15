@@ -1,0 +1,25 @@
+Drupal Role Fetcher
+
+Author: Steve Moitozo, <steve_moitozo@sil.org>
+Copyright: SIL International, http://www.sil.org
+Written for the Polder Consortium, http://www.polderconsortium.org
+
+This code is licensed under the GPL v2, http://www.gnu.org/licenses/gpl-2.0.html
+
+The project page is located at http://code.google.com/p/drupalrolefetcher/
+
+Here are some example queries to DRF:
+
+// Find the user by Drupal uid (users.uid) and return the result as serialized PHP
+https://www.example.org/drf/?sharedsec=SECRET&uid=1&mode=PHP
+
+// Find the user by e-mail (users.mail) and return the result as serialized PHP
+https://www.example.org/drf/?sharedsec=SECRET&mail=steve@example.org&mode=PHP
+
+// Find the user by name (users.name) and return the result as serialized PHP
+https://www.example.org/drf/?sharedsec=SECRET&name=Steve&mode=PHP
+
+// Find the user by authname (authmap.authname) and return the result as serialized PHP
+https://www.example.org/drf/?sharedsec=SECRET&name=steve@idp.example.org&mode=PHP
+
+NOTE: DRF supports three serializations: PHP, CSV, and JSON
