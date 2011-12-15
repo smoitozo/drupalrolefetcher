@@ -14,11 +14,14 @@
 // |                                                   |
 // | 'drf_sharedsec' shared secret assigned by the DRF |
 // |                                                   |
-// | 'user_identifier' the attribute you will use to   |
-// |    find the user in Drupal                        |
+// | 'drf_drupal_identifier_name' the name of the Drupal
+// |    attribute (uid, name, mail, or authname)       |
 // |                                                   |
-// | 'attribute_name' the attribute you want the Drupal|
-// |    roles put into                                 |
+// | 'drf_saml_identifier_attribute' the SAML attribute|
+// |    you will use to find the user in Drupal        |
+// |                                                   |
+// | 'new_attribute_name' the attribute you want the   |
+// |    Drupal roles put into                          |
 // |                                                   |
 // | EXAMPLE                                           |
 // |                                                   |
@@ -27,7 +30,8 @@
 // |    'class' => 'core:AddRolesFromDrupal',          |
 // |    'drf_url' => 'https://www.example.com/drf/',   |
 // |    'drf_sharedsec' => '1234567890abcdefghijk',    |
-// |    'drf_user_identifier' => 'eduPersonPrincipalName',
+// |    'drf_drupal_identifier_name' => 'authname',
+// |    'drf_saml_identifier_attribute' => 'eduPersonPrincipalName',
 // |    'new_attribute_name' => 'wwwexamplecomroles',  |
 // |    ),                                             |
 // | ),                                                |
@@ -74,7 +78,8 @@ class sspmod_drupalrolefetcher_Auth_Process_AddRolesFromDrupal extends SimpleSAM
 		$reqConfigVars = array(
                 'drf_url',
         				'drf_sharedsec',
-        				'drf_user_identifier',
+                'drf_drupal_identifier_name',
+                'drf_saml_identifier_attribute',
         				'new_attribute_name',
               );
 
@@ -123,11 +128,11 @@ class sspmod_drupalrolefetcher_Auth_Process_AddRolesFromDrupal extends SimpleSAM
 
 		$attributes =& $request['Attributes'];
 
-		if(!isset($attributes[$this->config['drf_user_identifier']])){
-			throw new Exception('The user\'s identity does not have an attribute called "'.$this->config['drf_user_identifier'].'"');
+		if(!isset($attributes[$this->config['drf_saml_identifier_attribute']])){
+			throw new Exception('The user\'s identity does not have an attribute called "'.$this->config['drf_saml_identifier_attribute'].'"');
 		}
 
-    $arrDrupalRoles = $this->queryDrf($attributes[$this->config['drf_user_identifier']][0]);
+    $arrDrupalRoles = $this->queryDrf($attributes[$this->config['drf_saml_identifier_attribute']][0]);
 
     if(is_array($arrDrupalRoles)){
       $attributes[$this->config['new_attribute_name']] = $arrDrupalRoles;
@@ -141,12 +146,12 @@ class sspmod_drupalrolefetcher_Auth_Process_AddRolesFromDrupal extends SimpleSAM
    *
    * Add attributes from Drupal.
    *
-   * @param string $uid  The user identifier
+   * @param string $saml_identifier_attribute  The user identifier
    *
    * @return array the Drupal roles
    */
-  private function queryDrf($uid) {
-    $strDrupalRoles = file_get_contents($this->config['drf_url'] . '?sharedsec=' . $this->config['drf_sharedsec'] . '&userid=' . urlencode($uid) . '&mode=PHP');
+  private function queryDrf($saml_identifier_attribute) {
+    $strDrupalRoles = file_get_contents($this->config['drf_url'] . '?sharedsec=' . $this->config['drf_sharedsec'] . '&' . $this->config['drf_drupal_identifier_name'] .'=' . urlencode($saml_identifier_attribute) . '&mode=PHP');
     $arrDrupalRoles = unserialize($strDrupalRoles);
 
     if(is_array($arrDrupalRoles) && count($arrDrupalRoles)){
