@@ -59,9 +59,15 @@ if (!in_array($_REQUEST['sharedsec'], $arrSharedSecrets)) {
   bailout('Authentication failed.');
 }
 
-// 2) Check the user identifier (userid).
+// 2) Check the user identifier (uid, name, email, or authname).
 
-if (!(isset($_REQUEST['userid']) && $_REQUEST['userid'])) {
+if (!(
+        isset($_REQUEST['uid']) && $_REQUEST['uid'] ||
+        isset($_REQUEST['name']) && $_REQUEST['name'] ||
+        isset($_REQUEST['mail']) && $_REQUEST['mail'] ||
+        isset($_REQUEST['authname']) && $_REQUEST['authname'] ||
+        isset($_REQUEST['userid']) && $_REQUEST['userid'] // this is deprecated and replaced by authname
+      )) {
   bailout('The request is missing a user identifier.');
 }
 
@@ -77,7 +83,28 @@ drupal_load('module', 'system');
 drupal_load('module', 'user');
 
 // Find the Drupal user.
-$user = user_external_load($_REQUEST['userid']);
+
+// If the Drupal uid (users.uid) is provided
+if(isset($_REQUEST['uid'])){
+   $user = user_load($_REQUEST['uid']);
+
+// If the name (users.name) is provided
+}elseif(isset($_REQUEST['name'])){
+   $user = user_load_by_name($_REQUEST['name']);
+
+// If the email (users.mail) is provided
+}elseif(isset($_REQUEST['mail'])){
+   $user = user_load_by_mail($_REQUEST['mail']);
+
+// If the authname (authmap.authname) is provided
+}elseif(isset($_REQUEST['authname'])){
+   $user = user_external_load($_REQUEST['authname']);
+
+// If the userid (authmap.authname) is provided
+// NOTE: The use of userid is deprecated in favor of authname
+}elseif(isset($_REQUEST['userid'])){
+   $user = user_external_load($_REQUEST['userid']);
+}
 
 // All real Drupal user's have an uid higher than 0 and names.
 if ((isset($user->uid) && 0 == $user->uid) || !isset($user->name)) {
