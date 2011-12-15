@@ -1,0 +1,6 @@
+As integration modules are written for they are to be stored
+in this directory. The directories at this level should correspond
+to the root directories for the respective applications. For instance,
+the simplesamlphp directory corresponds to the root directory for
+a simplesamlphp installation. It contains directories and files that
+are layed out according to the pattern of the simplesamlphp application.
